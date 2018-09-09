@@ -1,0 +1,75 @@
+# Python 3  Raspberrypi 3 Model B+
+#Robogaia 4 relay board
+#Do not use any information that comes with the board.
+#Python Program
+
+# Setting Up the GPIO Ports
+import RPi.GPIO as GPIO
+import time
+import os
+
+GPIO.setmode(GPIO.BCM)  #Easiest to use instead of the Pi layout
+GPIO.setup(22,GPIO.OUT)  #These are the GPIO ports of the Robogaia 22,21,17,4 
+GPIO.setup(27,GPIO.OUT)
+GPIO.setup(17,GPIO.OUT)
+GPIO.setup(4,GPIO.OUT)
+
+channel_is_on22 = GPIO.input(22) #variable used to tell the state
+channel_is_on21 = GPIO.input(27) #of each GPIO port.
+channel_is_on4 = GPIO.input(4)
+channel_is_on17 = GPIO.input(17)
+
+
+#Listing the relays from top to bottom on board
+#Top of board is where robogaia.com is given
+#Setting up the print statements
+relay1 = "Relay #1" #Relay #1 is GPIO(22)
+relay2 = "Relay #2" #Relay #2 is GPIO(27)
+relay3 = "Relay #3" #Relay #3 is GPIO(17)
+relay4 = "Relay #4" #Relay #4 is GPIO(4)
+
+#sets up timing for a . or -
+#turns on the relays for a "-"  I am using an RGB spot light (all colors)
+rate = .33
+def morse_line():
+        GPIO.output(22,GPIO.HIGH)
+        GPIO.output(27,GPIO.HIGH)
+        GPIO.output(17,GPIO.HIGH)
+        time.sleep(3*rate)
+        GPIO.output(22,GPIO.LOW)
+        GPIO.output(27,GPIO.LOW)
+        GPIO.output(17,GPIO.LOW)
+        time.sleep(rate)
+        
+#turns on the relay (red LEDs in my case)
+def morse_dot():
+        GPIO.output(27,GPIO.HIGH)
+        time.sleep(rate)
+        GPIO.output(27,GPIO.LOW)
+        time.sleep(rate)
+#Enter the sequence of "." "-" or "space" that is desired
+text = input("Enter a - . or space - Morse code: ")
+
+#The number of times the sequence is repeated.
+for i in range(1,2):
+        for i in range(len(text)):
+            if (text[i] == '-'):
+        
+                morse_line()
+#this outputs the voice "dash".  The "test" is there because the first word is skipped.???
+                os.system("flite -t 'test dash'")
+          
+            elif (text[i]== '.'):
+        
+                morse_dot()
+                os.system("flite -t 'test dot'")
+        
+            elif (text[i]== " "):
+                  time.sleep(6*rate)
+            else:
+                  print("invalid char")
+          
+
+
+GPIO.cleanup()
+print("All Relays are switched OFF and GPIO reset")
